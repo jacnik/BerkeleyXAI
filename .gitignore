@@ -1,0 +1,6 @@
+# Ignore junk
+*.zip
+*.pdf
+tutorial*
+python*
+*.pyc
