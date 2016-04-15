@@ -153,8 +153,41 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        "*** YOUR CODE HERE ***"    
+        maxDepth = self.depth * gameState.getNumAgents()
+        
+        def maxValue(state, agentIndex, currDepth):
+            v = -util.sys.maxint - 1
+            actions = state.getLegalActions(agentIndex)
+            nextAgent = (agentIndex + 1) % state.getNumAgents()
+            for action in actions:
+                successor = state.generateSuccessor(agentIndex, action)
+                v = max(v, getValueDispatch(successor, nextAgent, currDepth + 1))
+            return v
+ 
+        def minValue(state, agentIndex, currDepth):
+            v = util.sys.maxint
+            actions = state.getLegalActions(agentIndex)
+            nextAgent = (agentIndex + 1) % state.getNumAgents()
+            for action in actions:
+                successor = state.generateSuccessor(agentIndex, action)
+                v = min(v, getValueDispatch(successor, nextAgent, currDepth + 1))
+            return v
+        
+        def getValueDispatch(state, agentIndex, currDepth):
+            if currDepth == maxDepth or state.isLose() or state.isWin():
+                return self.evaluationFunction(state)
+            if agentIndex == 0: return maxValue(state, agentIndex, currDepth) # 0 is maximizing agent
+            else: return minValue(state, agentIndex, currDepth)
+        
+        # (score, action)
+        minmax = [(getValueDispatch(gameState.generateSuccessor(0, action), 1, 1), action) 
+                    for action in gameState.getLegalActions(0)]
+        maxVal, maxAct = max(minmax)
+
+        # import pdb; pdb.set_trace()
+        return maxAct
+        
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
