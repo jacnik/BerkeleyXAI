@@ -153,41 +153,48 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-        "*** YOUR CODE HERE ***"    
+        "*** YOUR CODE HERE ***"
         maxDepth = self.depth * gameState.getNumAgents()
-        
+        maxInt = util.sys.maxint
+        minInt = -util.sys.maxint - 1
+
         def maxValue(state, agentIndex, currDepth):
-            v = -util.sys.maxint - 1
+            v = minInt
+            act = ''
             actions = state.getLegalActions(agentIndex)
             nextAgent = (agentIndex + 1) % state.getNumAgents()
             for action in actions:
                 successor = state.generateSuccessor(agentIndex, action)
-                v = max(v, getValueDispatch(successor, nextAgent, currDepth + 1))
-            return v
- 
+                nextVal, nextAct = getValueDispatch(successor, nextAgent, currDepth + 1)
+                if nextVal > v:
+                    v = nextVal
+                    act = action
+                    
+            return (v, act)
+
         def minValue(state, agentIndex, currDepth):
-            v = util.sys.maxint
+            v = maxInt
+            act = ''
             actions = state.getLegalActions(agentIndex)
             nextAgent = (agentIndex + 1) % state.getNumAgents()
             for action in actions:
                 successor = state.generateSuccessor(agentIndex, action)
-                v = min(v, getValueDispatch(successor, nextAgent, currDepth + 1))
-            return v
+                nextVal, nextAct = getValueDispatch(successor, nextAgent, currDepth + 1)
+                if nextVal < v:
+                    v = nextVal
+                    act = action
+
+            return (v, act)
         
         def getValueDispatch(state, agentIndex, currDepth):
             if currDepth == maxDepth or state.isLose() or state.isWin():
-                return self.evaluationFunction(state)
+                return (self.evaluationFunction(state), '')
             if agentIndex == 0: return maxValue(state, agentIndex, currDepth) # 0 is maximizing agent
             else: return minValue(state, agentIndex, currDepth)
         
-        # (score, action)
-        minmax = [(getValueDispatch(gameState.generateSuccessor(0, action), 1, 1), action) 
-                    for action in gameState.getLegalActions(0)]
-        maxVal, maxAct = max(minmax)
-
-        # import pdb; pdb.set_trace()
+        maxVal, maxAct = getValueDispatch(gameState, 0, 0)
         return maxAct
-        
+
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -199,7 +206,53 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        maxDepth = self.depth * gameState.getNumAgents()
+        maxInt = util.sys.maxint
+        minInt = -util.sys.maxint - 1
+        
+        # bMax: alpha 
+        # bMin: beta
+        def maxValue(state, agentIndex, currDepth, bMax, bMin):
+            v = minInt
+            act = ''
+            actions = state.getLegalActions(agentIndex)
+            nextAgent = (agentIndex + 1) % state.getNumAgents()
+            for action in actions:
+                successor = state.generateSuccessor(agentIndex, action)
+                nextVal, nextAct = getValueDispatch(successor, nextAgent, currDepth + 1, bMax, bMin)
+                if nextVal > v:
+                    v = nextVal
+                    act = action
+                if v > bMin: return (v, action)
+                bMax = max(bMax, v) 
+
+            return (v, act)
+
+        def minValue(state, agentIndex, currDepth, bMax, bMin):
+            v = maxInt
+            act = ''
+            actions = state.getLegalActions(agentIndex)
+            nextAgent = (agentIndex + 1) % state.getNumAgents()
+            for action in actions:
+                successor = state.generateSuccessor(agentIndex, action)
+                nextVal, nextAct = getValueDispatch(successor, nextAgent, currDepth + 1, bMax, bMin)
+                if nextVal < v:
+                    v = nextVal
+                    act = action
+                if v < bMax: return (v, action)
+                bMin = min(bMin, v)
+ 
+            return (v, act)
+        
+        def getValueDispatch(state, agentIndex, currDepth, bMax, bMin):
+            if currDepth == maxDepth or state.isLose() or state.isWin():
+                return (self.evaluationFunction(state), '')
+            if agentIndex == 0: return maxValue(state, agentIndex, currDepth, bMax, bMin) # 0 is maximizing agent
+            else: return minValue(state, agentIndex, currDepth, bMax, bMin)
+        
+        maxVal, maxAct = getValueDispatch(gameState, 0, 0, minInt, maxInt)
+        return maxAct
+
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
