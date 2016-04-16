@@ -267,7 +267,45 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        maxDepth = self.depth * gameState.getNumAgents()
+        maxInt = util.sys.maxint
+        minInt = -util.sys.maxint - 1
+
+        def maxValue(state, agentIndex, currDepth):
+            v = minInt
+            act = ''
+            actions = state.getLegalActions(agentIndex)
+            nextAgent = (agentIndex + 1) % state.getNumAgents()
+            for action in actions:
+                successor = state.generateSuccessor(agentIndex, action)
+                nextVal, nextAct = getValueDispatch(successor, nextAgent, currDepth + 1)
+                if nextVal > v:
+                    v = nextVal
+                    act = action
+
+            return (v, act)
+
+        def expValue(state, agentIndex, currDepth):
+            v = 0
+            act = ''
+            actions = state.getLegalActions(agentIndex)
+            nextAgent = (agentIndex + 1) % state.getNumAgents()
+            for action in actions:
+                p = 1.0/len(actions) # probability of a single action (here uniform distribution)
+                successor = state.generateSuccessor(agentIndex, action)
+                nextVal, nextAct = getValueDispatch(successor, nextAgent, currDepth + 1)
+                v += p * nextVal
+
+            return (v, act)
+
+        def getValueDispatch(state, agentIndex, currDepth):
+            if currDepth == maxDepth or state.isLose() or state.isWin():
+                return (self.evaluationFunction(state), '')
+            if agentIndex == 0: return maxValue(state, agentIndex, currDepth) # 0 is maximizing agent
+            else: return expValue(state, agentIndex, currDepth)
+
+        maxVal, maxAct = getValueDispatch(gameState, 0, 0)
+        return maxAct
 
 def betterEvaluationFunction(currentGameState):
     """
