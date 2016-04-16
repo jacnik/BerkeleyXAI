@@ -315,7 +315,39 @@ def betterEvaluationFunction(currentGameState):
       DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # linear combination of features:
+    # distances to food
+    # distances to ghosts
+    # score
+    #successorGameState = currentGameState.generatePacmanSuccessor(action)
+    #newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+
+    pacmanPos = currentGameState.getPacmanPosition()
+    food = currentGameState.getFood()
+    ghostStates = currentGameState.getGhostStates()
+
+    foodScore = 1
+    
+    distancesToFood = [(manhattanDistance(pacmanPos, foodPos), foodPos) for foodPos in food.asList()]
+    if distancesToFood:
+        closestFoodDist, closestFoodPos = min(distancesToFood)
+        distancesToFood.remove((closestFoodDist, closestFoodPos))
+        minAggDist = closestFoodDist
+        while distancesToFood:
+            distancesToFood = [(manhattanDistance(closestFoodPos, foodPos), foodPos) for _, foodPos in distancesToFood]
+            closestFoodDist, closestFoodPos = min(distancesToFood)
+            minAggDist += closestFoodDist
+            distancesToFood.remove((closestFoodDist, closestFoodPos))
+            
+        foodScore = 1.0/(minAggDist + 1)
+    
+    distancesToGhosts = [manhattanDistance(pacmanPos, ghostState.getPosition()) for ghostState in ghostStates]
+    closestGhostDist = min(distancesToGhosts)
+    ghostScore = closestGhostDist # the further the better
+    ghostScore = ghostScore/-foodScore if ghostScore < 3 else 0
+    
+    #import pdb; pdb.set_trace()
+    return 2*foodScore + ghostScore
 
 # Abbreviation
 better = betterEvaluationFunction
