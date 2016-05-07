@@ -48,13 +48,12 @@ class ValueIterationAgent(ValueEstimationAgent):
         for _ in range(iterations):
             updateBatch = self.values.copy()
             for state in mdp.getStates():
-                if state != 'TERMINAL_STATE':
-                    self.values[state] = max([
-                        sum([prob*(mdp.getReward(state, action, transitionState) + discount*updateBatch[transitionState])
-                            for transitionState, prob 
-                            in mdp.getTransitionStatesAndProbs(state, action)
-                            if prob != 0])
-                        for action in mdp.getPossibleActions(state)] or [0])
+                self.values[state] = max([
+                    sum([prob*(mdp.getReward(state, action, transitionState) + discount*updateBatch[transitionState])
+                        for transitionState, prob 
+                        in mdp.getTransitionStatesAndProbs(state, action)
+                        if prob != 0])
+                    for action in mdp.getPossibleActions(state)] or [0])
 
     def getValue(self, state):
         """
