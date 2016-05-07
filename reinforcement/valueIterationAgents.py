@@ -45,7 +45,6 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
-        
         for _ in range(iterations):
             updateBatch = self.values.copy()
             for state in mdp.getStates():
@@ -63,32 +62,7 @@ class ValueIterationAgent(ValueEstimationAgent):
                     
                     tmpValues.append(sumNextStates)
                       
-                self.values[state] = max(tmpValues or [0])    
-
-                
-            #self.values += updateBatch
-        #import pdb; pdb.set_trace()      
-       
-        # import pdb; pdb.set_trace()
-        # for _ in range(iterations):
-            # for state in mdp.getStates():
-                # if not mdp.isTerminal(state):
-                    # import pdb; pdb.set_trace()
-                    # maxActionVal = 0
-                    
-                    # for action in mdp.getPossibleActions(state):
-                        # transitionsAndProbs = mdp.getTransitionStatesAndProbs(state, action)
-                        # possibleTransitionsAndProbs = filter( lambda (st, prob): prob != 0, transitionsAndProbs)
-                        # sumNextStates = 0
-                        
-                        # for nextState, prob in possibleTransitionsAndProbs:
-                            # reward = mdp.getReward(state, action, nextState)
-                            # sumNextStates += prob*(reward + discount*self.values[nextState])
-                        
-                        # maxActionVal = max(maxActionVal, sumNextStates)
-                    
-                    # self.values[state] = maxActionVal
-
+                self.values[state] = max(tmpValues or [0])
 
     def getValue(self, state):
         """
@@ -103,14 +77,11 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        transitionsAndProbs = self.mdp.getTransitionStatesAndProbs(state, action)
-        possibleTransitionsAndProbs = filter( lambda (st, prob): prob != 0, transitionsAndProbs)
-        sumNextStates = 0       
-        for nextState, prob in possibleTransitionsAndProbs:
-            reward = self.mdp.getReward(state, action, nextState)
-            sumNextStates += prob*(reward + self.discount*self.values[nextState])
-        
-        return sumNextStates
+        return sum[prob*(self.mdp.getReward(state, action, transitionState) + self.discount*self.values[transitionState]
+             for transitionState, prob 
+             in mdp.getTransitionStatesAndProbs(state, action)
+             if prob != 0]
+      
             
     def computeActionFromValues(self, state):
         """
