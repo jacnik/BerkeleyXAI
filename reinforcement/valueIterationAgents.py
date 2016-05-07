@@ -45,6 +45,49 @@ class ValueIterationAgent(ValueEstimationAgent):
 
         # Write value iteration code here
         "*** YOUR CODE HERE ***"
+        
+        for _ in range(iterations):
+            updateBatch = self.values.copy()
+            for state in mdp.getStates():
+
+                tmpValues = []                
+                for action in mdp.getPossibleActions(state):
+                    transitionsAndProbs = [(transitionState, prob)
+                     for transitionState, prob 
+                     in mdp.getTransitionStatesAndProbs(state, action)
+                     if prob != 0]
+        
+                    sumNextStates = sum([prob*(mdp.getReward(state, action, nextState) + discount*updateBatch[nextState]) 
+                        for nextState, prob 
+                        in transitionsAndProbs])
+                    
+                    tmpValues.append(sumNextStates)
+                      
+                self.values[state] = max(tmpValues or [0])    
+
+                
+            #self.values += updateBatch
+        #import pdb; pdb.set_trace()      
+       
+        # import pdb; pdb.set_trace()
+        # for _ in range(iterations):
+            # for state in mdp.getStates():
+                # if not mdp.isTerminal(state):
+                    # import pdb; pdb.set_trace()
+                    # maxActionVal = 0
+                    
+                    # for action in mdp.getPossibleActions(state):
+                        # transitionsAndProbs = mdp.getTransitionStatesAndProbs(state, action)
+                        # possibleTransitionsAndProbs = filter( lambda (st, prob): prob != 0, transitionsAndProbs)
+                        # sumNextStates = 0
+                        
+                        # for nextState, prob in possibleTransitionsAndProbs:
+                            # reward = mdp.getReward(state, action, nextState)
+                            # sumNextStates += prob*(reward + discount*self.values[nextState])
+                        
+                        # maxActionVal = max(maxActionVal, sumNextStates)
+                    
+                    # self.values[state] = maxActionVal
 
 
     def getValue(self, state):
@@ -60,8 +103,15 @@ class ValueIterationAgent(ValueEstimationAgent):
           value function stored in self.values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        transitionsAndProbs = self.mdp.getTransitionStatesAndProbs(state, action)
+        possibleTransitionsAndProbs = filter( lambda (st, prob): prob != 0, transitionsAndProbs)
+        sumNextStates = 0       
+        for nextState, prob in possibleTransitionsAndProbs:
+            reward = self.mdp.getReward(state, action, nextState)
+            sumNextStates += prob*(reward + self.discount*self.values[nextState])
+        
+        return sumNextStates
+            
     def computeActionFromValues(self, state):
         """
           The policy is the best action in the given state
@@ -72,7 +122,12 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        maxActionVal, maxAction = 0, ''
+        for action in self.mdp.getPossibleActions(state):
+            qVal = self.computeQValueFromValues(state, action)
+            maxActionVal, maxAction = (qVal, action) if qVal > maxActionVal else (maxActionVal, maxAction)
+        
+        return maxAction
 
     def getPolicy(self, state):
         return self.computeActionFromValues(state)
