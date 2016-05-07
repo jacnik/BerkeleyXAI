@@ -50,15 +50,11 @@ class ValueIterationAgent(ValueEstimationAgent):
             for state in mdp.getStates():
 
                 tmpValues = []                
-                for action in mdp.getPossibleActions(state):
-                    transitionsAndProbs = [(transitionState, prob)
-                     for transitionState, prob 
-                     in mdp.getTransitionStatesAndProbs(state, action)
-                     if prob != 0]
-        
-                    sumNextStates = sum([prob*(mdp.getReward(state, action, nextState) + discount*updateBatch[nextState]) 
-                        for nextState, prob 
-                        in transitionsAndProbs])
+                for action in mdp.getPossibleActions(state):   
+                    sumNextStates = sum([prob*(mdp.getReward(state, action, transitionState) + discount*updateBatch[transitionState]) 
+                        for transitionState, prob 
+                        in mdp.getTransitionStatesAndProbs(state, action)
+                        if prob != 0])
                     
                     tmpValues.append(sumNextStates)
                       
