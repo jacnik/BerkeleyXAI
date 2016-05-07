@@ -4,3 +4,4 @@
 tutorial*
 python*
 *.pyc
+*.test_output
