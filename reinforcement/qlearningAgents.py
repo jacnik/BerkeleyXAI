@@ -43,7 +43,10 @@ class QLearningAgent(ReinforcementAgent):
         ReinforcementAgent.__init__(self, **args)
 
         "*** YOUR CODE HERE ***"
-
+        #import pdb; pdb.set_trace()
+        # qvalues are organised as a util.Counter() of (state, action) pairs
+        self.qvalues = util.Counter()
+        
     def getQValue(self, state, action):
         """
           Returns Q(state,action)
@@ -51,8 +54,7 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        return self.qvalues((state, action))
 
     def computeValueFromQValues(self, state):
         """
@@ -62,7 +64,9 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        t = [self.getQValue(state,action) 
+            for action in self.getLegalActions(state)]
+        return max(t or [0.0]]
 
     def computeActionFromQValues(self, state):
         """
@@ -71,7 +75,11 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        t = [(self.getQValue(state,action), action) 
+            for action in self.getLegalActions(state)] or [(0.0, None)]     
+        qv, qa = max(t)
+        _, ra = random.choice(filter(lambda (v, a): v == qv, t))
+        return ra
 
     def getAction(self, state):
         """
@@ -85,12 +93,16 @@ class QLearningAgent(ReinforcementAgent):
           HINT: To pick randomly from a list, use random.choice(list)
         """
         # Pick Action
-        legalActions = self.getLegalActions(state)
-        action = None
+        optimalAction = computeActionFromQValues(state)
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
-        return action
+        
+        if util.flipCoin(self.epsilon):
+            # do exploration
+            t = filter(lambda a: a != optimalAction, self.getLegalActions(state)) or [optimalAction]
+            return random.choice(t)
+        else:
+            # do exploitation
+            return optimalAction
 
     def update(self, state, action, nextState, reward):
         """
