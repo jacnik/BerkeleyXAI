@@ -93,12 +93,11 @@ class QLearningAgent(ReinforcementAgent):
           HINT: To pick randomly from a list, use random.choice(list)
         """
         # Pick Action
-        optimalAction = computeActionFromQValues(state)
+        optimalAction = self.computeActionFromQValues(state)
         "*** YOUR CODE HERE ***"
         if util.flipCoin(self.epsilon):
             # do exploration
-            t = filter(lambda a: a != optimalAction, self.getLegalActions(state)) or [optimalAction]
-            return random.choice(t)
+            return random.choice(self.getLegalActions(state) or [None])
         else:
             # do exploitation
             return optimalAction
