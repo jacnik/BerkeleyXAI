@@ -113,7 +113,11 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        import pdb; pdb.set_trace()
+        currentQVal = self.getQValue(state, action)
+        nextQvals = [self.getQValue(nextState, newAction) 
+                     for newAction in self.getLegalActions(nextState)] or [0.0]
+        self.qvalues[(state, action)] = \
+            (1-self.alpha)*currentQVal + self.alpha*(reward + self.discount*max(nextQvals))
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
