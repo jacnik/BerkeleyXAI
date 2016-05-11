@@ -54,7 +54,7 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
-        return self.qvalues((state, action))
+        return self.qvalues[(state, action)]
 
     def computeValueFromQValues(self, state):
         """
@@ -66,7 +66,7 @@ class QLearningAgent(ReinforcementAgent):
         "*** YOUR CODE HERE ***"
         t = [self.getQValue(state,action) 
             for action in self.getLegalActions(state)]
-        return max(t or [0.0]]
+        return max(t or [0.0])
 
     def computeActionFromQValues(self, state):
         """
@@ -95,7 +95,6 @@ class QLearningAgent(ReinforcementAgent):
         # Pick Action
         optimalAction = computeActionFromQValues(state)
         "*** YOUR CODE HERE ***"
-        
         if util.flipCoin(self.epsilon):
             # do exploration
             t = filter(lambda a: a != optimalAction, self.getLegalActions(state)) or [optimalAction]
@@ -114,7 +113,7 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        import pdb; pdb.set_trace()
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
