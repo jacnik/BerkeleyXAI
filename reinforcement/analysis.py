@@ -61,9 +61,11 @@ def question3e():
     # If not possible, return 'NOT POSSIBLE'
 
 def question6():
+    # python gridworld.py -a q -k 50 -n 0 -g BridgeGrid -e 0.5 --learningRate 0.5
     answerEpsilon = None
     answerLearningRate = None
-    return answerEpsilon, answerLearningRate
+    #return answerEpsilon, answerLearningRate
+    return 'NOT POSSIBLE'
     # If not possible, return 'NOT POSSIBLE'
 
 if __name__ == '__main__':
