@@ -225,8 +225,18 @@ class ExactInference(InferenceModule):
         positions after a time update from a particular position.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        # python autograder.py -t test_cases/q2/2-ExactElapse
+        # python autograder.py -q q2
+        # import pdb; pdb.set_trace()
+            
+        allPossible = util.Counter()
+        for oldPos, oldProb in self.beliefs.items():
+            newPosDist = self.getPositionDistribution(self.setGhostPosition(gameState, oldPos))
+            for newPos, newProb in newPosDist.items():
+                allPossible[newPos] += oldProb * newProb
+                
+        self.beliefs = allPossible
+        
     def getBeliefDistribution(self):
         return self.beliefs
 
