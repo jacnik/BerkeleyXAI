@@ -163,4 +163,5 @@ class GreedyBustersAgent(BustersAgent):
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
         "*** YOUR CODE HERE ***"
+        # python autograder.py -t test_cases/q1/1-ExactObserve
         util.raiseNotDefined()

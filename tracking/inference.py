@@ -149,16 +149,22 @@ class ExactInference(InferenceModule):
         pacmanPosition = gameState.getPacmanPosition()
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        # python autograder.py -q q1
+        #import pdb; pdb.set_trace()
+        
         # Replace this code with a correct observation update
         # Be sure to handle the "jail" edge case where the ghost is eaten
         # and noisyDistance is None
+        
+        # general formula for inference is:
+        # self.beliefs[p] * emissionModel[trueDistance]            
         allPossible = util.Counter()
-        for p in self.legalPositions:
-            trueDistance = util.manhattanDistance(p, pacmanPosition)
-            if emissionModel[trueDistance] > 0:
-                allPossible[p] = 1.0
+        if noisyDistance is None:
+            allPossible[self.getJailPosition()] = 1.0
+        else:
+            for p in self.legalPositions:
+                trueDistance = util.manhattanDistance(p, pacmanPosition)
+                allPossible[p] = self.beliefs[p] * emissionModel[trueDistance]
 
         "*** END YOUR CODE HERE ***"
 
