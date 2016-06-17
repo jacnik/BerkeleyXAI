@@ -162,6 +162,24 @@ class GreedyBustersAgent(BustersAgent):
         livingGhostPositionDistributions = \
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
+        
         "*** YOUR CODE HERE ***"
-        # python autograder.py -t test_cases/q1/1-ExactObserve
-        util.raiseNotDefined()
+        # python autograder.py -q q3
+        # python autograder.py -q q3 --no-graphics
+        
+        # positions of highest likelihood for each ghost
+        likelyGhostsPositions = [max(distr, key=distr.get) for distr in livingGhostPositionDistributions]
+        
+        # min of list of (ghost distance from pacman, ghost position)
+        closestDist, closestPos = min([
+            (self.distancer.getDistance(pacmanPosition, ghostPosition), ghostPosition) 
+            for ghostPosition in likelyGhostsPositions])
+        
+        # min of list of (distance to closest ghost from state after an action, action)
+        successorDist, successorAction = min([
+            (self.distancer.getDistance(closestPos, Actions.getSuccessor(pacmanPosition, action)), action)
+            for action in legal])
+        
+        return successorAction
+        
+        
