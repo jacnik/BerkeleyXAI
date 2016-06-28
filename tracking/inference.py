@@ -361,8 +361,17 @@ class ParticleFilter(InferenceModule):
         a belief distribution.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        # python autograder.py -q q5
+        #import pdb; pdb.set_trace()
+        newPositions = [
+            util.sample(
+                self.getPositionDistribution(self.setGhostPosition(gameState, oldPos))
+            )
+            for oldPos in self.particlePositions]
+            
+        self.particlePositions = newPositions
+        
+        
     def getBeliefDistribution(self):
         """
         Return the agent's current belief state, a distribution over ghost
