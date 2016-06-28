@@ -18,6 +18,7 @@ import random
 import busters
 import game
 
+
 class InferenceModule:
     """
     An inference module tracks a belief distribution over a ghost's location.
@@ -256,7 +257,6 @@ class ParticleFilter(InferenceModule):
     def setNumParticles(self, numParticles):
         self.numParticles = numParticles
 
-
     def initializeUniformly(self, gameState):
         """
         Initializes a list of particles. Use self.numParticles for the number of
@@ -270,7 +270,27 @@ class ParticleFilter(InferenceModule):
         weight with each position) is incorrect and may produce errors.
         """
         "*** YOUR CODE HERE ***"
-
+        # python autograder.py -q q4
+        
+        if len(self.legalPositions) > self.numParticles:
+            # there is less particles than positions
+            # I know that this should be uniform not random but since 
+            # random.choice() selects uniformally from a 
+            # sequence it might be close enough.
+            # alternative is just to place a particle every 
+            # len(self.legalPositions)/self.numParticles entry on legalPositions list.
+            
+            # import pdb; pdb.set_trace()
+            self.particlePositions = self.legalPositions*1 # *1 is a trick for making a copy
+            for _ in range(len(self.legalPositions) - self.numParticles):
+                self.particlePositions.remove(random.choice(self.particlePositions))
+            import pdb; pdb.set_trace() # todo remove debugger
+        else:
+            # there is more particles than positions
+            # there will be multiple particles on each position
+            particlesOnPos = self.numParticles/len(self.legalPositions)
+            self.particlePositions = self.legalPositions * particlesOnPos           
+            
     def observe(self, observation, gameState):
         """
         Update beliefs based on the given distance observation. Make sure to
@@ -302,7 +322,29 @@ class ParticleFilter(InferenceModule):
         emissionModel = busters.getObservationDistribution(noisyDistance)
         pacmanPosition = gameState.getPacmanPosition()
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # emissionModel = P(noisyDistance | trueDistance)
+        # weight(x) = P(e|x), e -> evidence
+        # B(X) => P(e|X)B'(X)
+        
+        oldBelief = self.getBeliefDistribution()
+        
+        if noisyDistance is not None:
+            # Ghost is not in a jail:
+            newBelief = util.Counter()
+            for point, oldBelief in oldBelief.items():
+                weight = emissionModel[util.manhattanDistance(pacmanPosition, point)]
+                newBelief[point] = weight * oldBelief
+        
+            if newBelief.totalCount() == 0:
+                self.initializeUniformly(gameState)
+            else:
+                self.particlePositions = [util.sample(newBelief) 
+                  for _ in xrange(self.numParticles)]
+        
+        else:
+            # ghost is in a jail:
+            self.particlePositions = [self.getJailPosition()] * self.numParticles
+                   
 
     def elapseTime(self, gameState):
         """
@@ -329,7 +371,17 @@ class ParticleFilter(InferenceModule):
         Counter object)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #import pdb; pdb.set_trace()
+        beliefs = util.Counter()
+        for pos in self.particlePositions:
+            beliefs[pos] += 1
+        
+        # normalize
+        for k, v in beliefs.items():
+            beliefs[k] = v*1.0 / len(self.particlePositions)
+        
+        return beliefs
+
 
 class MarginalInference(InferenceModule):
     """
