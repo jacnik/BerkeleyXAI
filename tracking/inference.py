@@ -607,6 +607,13 @@ class JointParticleFilter:
             # now loop through and update each entry in newParticle...
 
             "*** YOUR CODE HERE ***"
+            #import pdb; pdb.set_trace()
+            newPositions = [
+                util.sample(
+                    self.getPositionDistribution(self.setGhostPosition(gameState, oldPos))
+                )
+                for oldPos in self.particlePositions]
+            
 
             "*** END YOUR CODE HERE ***"
             newParticles.append(tuple(newParticle))
@@ -620,17 +627,7 @@ class JointParticleFilter:
         essentially converts a list of particles into a belief distribution (a
         Counter object)
         """
-        "*** YOUR CODE HERE ***"
-        # return list of counters, each of which is a belief distribution
-        # beliefs = [util.Counter() for _ in xrange(self.numGhosts)]
-        # unit = 1.0 / len(self.particles)
-        # for pos in self.particles:
-            # for i in xrange(self.numGhosts):
-                # import pdb; pdb.set_trace()
-                # beliefs[i][pos[i]] += unit
-                    
-        # return beliefs
-        
+        "*** YOUR CODE HERE ***"       
         unit = 1.0 / len(self.particles)
         beliefs = util.Counter()
         for pos in self.particles:
