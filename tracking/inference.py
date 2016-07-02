@@ -549,58 +549,7 @@ class JointParticleFilter:
         else:
             self.particles = [util.sample(newBelief)
                 for _ in xrange(self.numParticles)]
-        
-        
-        # oldBeliefs = self.getBeliefDistribution()
-        # newBelief = util.Counter()
-        
-        # for i in range(self.numGhosts):
-            # noisyDistance = noisyDistances[i]
-            # if noisyDistance is not None:
-                # # Ghost is not in a jail:
-                # for particle, oldBelief in oldBeliefs.items():
-                    # point = particle[i]
-                    # emissionModel = emissionModels[i]
-                    # weight = emissionModel[util.manhattanDistance(pacmanPosition, point)]
-                    # newBelief[particle] = weight * oldBelief
-            # else:
-                # # ghost is in a jail:
-                # import pdb; pdb.set_trace()
-                # self.getJailPosition(i)
-                # #todo implement
-            
-        # if newBelief.totalCount() == 0:
-            # self.initializeParticles()
-        # else:
-            # self.particles = [util.sample(newBelief)
-                # for _ in xrange(self.numParticles)]
-
-                
-        # oldBelief = self.getBeliefDistribution()
-        
-        # if noisyDistance is not None:
-            # # Ghost is not in a jail:
-            # newBelief = util.Counter()
-            # for particle, oldBelief in oldBelief.items():
-                # for i in range(self.numGhosts):
-                    # point = particle[i]
-                    # emissionModel = emissionModels[i]
-                    # weight = emissionModel[util.manhattanDistance(pacmanPosition, point)]
-                    # newBelief[particle] = weight * oldBelief
-        
-            # if newBelief.totalCount() == 0:
-                # self.initializeUniformly(gameState)
-            # else:
-                # self.particles = [util.sample(newBelief) 
-                  # for _ in xrange(self.numParticles)]
-        
-        # else:
-            # # ghost is in a jail:
-            # import pdb; pdb.set_trace()
-            # todo implement
-            #self.particls = [self.getJailPosition()] * self.numParticles
     
-        
     def getParticleWithGhostInJail(self, particle, ghostIndex):
         """
         Takes a particle (as a tuple of ghost positions) and returns a particle
