@@ -608,13 +608,12 @@ class JointParticleFilter:
 
             "*** YOUR CODE HERE ***"
             #import pdb; pdb.set_trace()
-            newPositions = [
-                util.sample(
-                    self.getPositionDistribution(self.setGhostPosition(gameState, oldPos))
-                )
-                for oldPos in self.particlePositions]
+            for i in range(self.numGhosts):
+                newParticle[i] = util.sample(
+                    getPositionDistributionForGhost(
+                        setGhostPositions(gameState, newParticle), i, self.ghostAgents[i]
+                    ))
             
-
             "*** END YOUR CODE HERE ***"
             newParticles.append(tuple(newParticle))
         self.particles = newParticles
