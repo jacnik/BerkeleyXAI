@@ -521,11 +521,9 @@ class JointParticleFilter:
         # weight(x) = P(e|x), e -> evidence
         # B(X) => P(e|X)B'(X)
         
-        # reduce(lambda x, y: x*y, [1,2,3,4,5,6])
-        
         oldBeliefs = self.getBeliefDistribution()
         newBelief = util.Counter()
-        """ todo: implement 2 special cases"""
+
         for particle, oldBelief in oldBeliefs.items():
             weight = 1
             for i in range(self.numGhosts):
