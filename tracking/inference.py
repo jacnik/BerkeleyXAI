@@ -381,14 +381,11 @@ class ParticleFilter(InferenceModule):
         """
         "*** YOUR CODE HERE ***"
         #import pdb; pdb.set_trace()
+        unit = 1.0 / len(self.particlePositions)
         beliefs = util.Counter()
         for pos in self.particlePositions:
-            beliefs[pos] += 1
-        
-        # normalize
-        for k, v in beliefs.items():
-            beliefs[k] = v*1.0 / len(self.particlePositions)
-        
+            beliefs[pos] += unit
+            
         return beliefs
 
 
@@ -463,7 +460,17 @@ class JointParticleFilter:
         weight with each position) is incorrect and may produce errors.
         """
         "*** YOUR CODE HERE ***"
+        # python autograder.py -q q6
+        # import pdb; pdb.set_trace()
+        xProductList = list(itertools.product(self.legalPositions, repeat=self.numGhosts))
 
+        if self.numParticles < len(xProductList):
+            self.particles = [random.choice(xProductList) for _ in xrange(self.numParticles)]
+        else:
+            multiplier = self.numParticles / len(xProductList) 
+            self.particles = xProductList * multiplier + \
+                random.sample(xProductList, self.numParticles - multiplier * len(xProductList))
+        
     def addGhostAgent(self, agent):
         """
         Each ghost agent is registered separately and stored (in case they are
@@ -510,7 +517,90 @@ class JointParticleFilter:
         emissionModels = [busters.getObservationDistribution(dist) for dist in noisyDistances]
 
         "*** YOUR CODE HERE ***"
+        # emissionModel = P(noisyDistance | trueDistance)
+        # weight(x) = P(e|x), e -> evidence
+        # B(X) => P(e|X)B'(X)
+        
+        # reduce(lambda x, y: x*y, [1,2,3,4,5,6])
+        
+        oldBeliefs = self.getBeliefDistribution()
+        newBelief = util.Counter()
+        """ todo: implement 2 special cases"""
+        for particle, oldBelief in oldBeliefs.items():
+            weight = 1
+            for i in range(self.numGhosts):
+                noisyDistance = noisyDistances[i]
+                if noisyDistance is not None:
+                    # Ghost is not in a jail:
+                    point = particle[i]
+                    emissionModel = emissionModels[i]
+                    weight *= emissionModel[util.manhattanDistance(pacmanPosition, point)]
+                elif particle[i] != self.getJailPosition(i): 
+                    # ghost is in a jail:
+                    point = self.getJailPosition(i)
+                    l = list(particle)
+                    l[i] = point
+                    particle = tuple(l)
 
+            newBelief[particle] = weight * oldBelief    
+
+        if newBelief.totalCount() == 0:
+            self.initializeParticles()
+        else:
+            self.particles = [util.sample(newBelief)
+                for _ in xrange(self.numParticles)]
+        
+        
+        # oldBeliefs = self.getBeliefDistribution()
+        # newBelief = util.Counter()
+        
+        # for i in range(self.numGhosts):
+            # noisyDistance = noisyDistances[i]
+            # if noisyDistance is not None:
+                # # Ghost is not in a jail:
+                # for particle, oldBelief in oldBeliefs.items():
+                    # point = particle[i]
+                    # emissionModel = emissionModels[i]
+                    # weight = emissionModel[util.manhattanDistance(pacmanPosition, point)]
+                    # newBelief[particle] = weight * oldBelief
+            # else:
+                # # ghost is in a jail:
+                # import pdb; pdb.set_trace()
+                # self.getJailPosition(i)
+                # #todo implement
+            
+        # if newBelief.totalCount() == 0:
+            # self.initializeParticles()
+        # else:
+            # self.particles = [util.sample(newBelief)
+                # for _ in xrange(self.numParticles)]
+
+                
+        # oldBelief = self.getBeliefDistribution()
+        
+        # if noisyDistance is not None:
+            # # Ghost is not in a jail:
+            # newBelief = util.Counter()
+            # for particle, oldBelief in oldBelief.items():
+                # for i in range(self.numGhosts):
+                    # point = particle[i]
+                    # emissionModel = emissionModels[i]
+                    # weight = emissionModel[util.manhattanDistance(pacmanPosition, point)]
+                    # newBelief[particle] = weight * oldBelief
+        
+            # if newBelief.totalCount() == 0:
+                # self.initializeUniformly(gameState)
+            # else:
+                # self.particles = [util.sample(newBelief) 
+                  # for _ in xrange(self.numParticles)]
+        
+        # else:
+            # # ghost is in a jail:
+            # import pdb; pdb.set_trace()
+            # todo implement
+            #self.particls = [self.getJailPosition()] * self.numParticles
+    
+        
     def getParticleWithGhostInJail(self, particle, ghostIndex):
         """
         Takes a particle (as a tuple of ghost positions) and returns a particle
@@ -577,8 +667,31 @@ class JointParticleFilter:
 
     def getBeliefDistribution(self):
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        """
+        Return the agent's current belief state, a distribution over ghost
+        locations conditioned on all evidence and time passage. This method
+        essentially converts a list of particles into a belief distribution (a
+        Counter object)
+        """
+        "*** YOUR CODE HERE ***"
+        # return list of counters, each of which is a belief distribution
+        # beliefs = [util.Counter() for _ in xrange(self.numGhosts)]
+        # unit = 1.0 / len(self.particles)
+        # for pos in self.particles:
+            # for i in xrange(self.numGhosts):
+                # import pdb; pdb.set_trace()
+                # beliefs[i][pos[i]] += unit
+                    
+        # return beliefs
+        
+        unit = 1.0 / len(self.particles)
+        beliefs = util.Counter()
+        for pos in self.particles:
+            beliefs[pos] += unit
+        
+        return beliefs
+        
+        
 # One JointInference module is shared globally across instances of MarginalInference
 jointInference = JointParticleFilter()
 
