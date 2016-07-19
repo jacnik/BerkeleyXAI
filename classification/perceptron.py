@@ -90,8 +90,9 @@ class PerceptronClassifier:
         Returns a list of the 100 features with the greatest weight for some label
         """
         featuresWeights = []
-
+        
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        tuples = [(w,l) for w, l in self.weights[label].items()]
+        nt = util.heapq.nlargest(100, tuples, key=lambda (a, b): b)
+        featuresWeights = [f for (f, w) in nt]
         return featuresWeights
