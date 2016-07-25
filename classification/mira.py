@@ -61,34 +61,37 @@ class MiraClassifier:
         representing a vector of values.
         """
         "*** YOUR CODE HERE ***"
-        C = Cgrid[0] # todo fix fixed C
-        for iteration in range(self.max_iterations):
-            print "Starting iteration ", iteration, "..."
-            for i in range(len(trainingData)):
-                "*** YOUR CODE HERE ***"
-                datum = trainingData[i]
-                
-                dotProducts = [(label, datum * featureDict) 
-                    for label, featureDict in self.weights.items()]
-                
-                util.random.shuffle(dotProducts)
-                classified_y, _ = max(dotProducts, key=lambda (a, b): b)
-                true_y = trainingLabels[i]
+        bestScore = -1
+        bestWeights = None
+        for C in Cgrid:
+            for iteration in range(self.max_iterations):
+                print "Starting iteration ", iteration, "..."
+                for i in range(len(trainingData)):
+                    datum = trainingData[i]
+                    
+                    dotProducts = [(label, datum * featureDict) 
+                        for label, featureDict in self.weights.items()]
+                    
+                    util.random.shuffle(dotProducts)
+                    classified_y, _ = max(dotProducts, key=lambda (a, b): b)
+                    true_y = trainingLabels[i]
 
-                if true_y != classified_y:
-                    rn = ((self.weights[classified_y] - self.weights[true_y]) * datum) + 1.0
-                    rd = 2 * len(datum)**2
-                    r = min(C, rn/rd)
-                    updatedDatum = datum.copy()
-                    updatedDatum.divideAll(1/r)
-                    self.weights[true_y] += updatedDatum
-                    self.weights[classified_y] -= updatedDatum
-                    #import pdb; pdb.set_trace()
-        
-        # todo validation and rest of Cgrid
-        classifications = self.classify(validationData)
-        score = len(filter(lambda (a,b): a==b, zip(validationLabels, classifications)))
-        import pdb; pdb.set_trace()
+                    if true_y != classified_y:
+                        rn = ((self.weights[classified_y] - self.weights[true_y]) * datum) + 1.0
+                        rd = 2 * len(datum)**2
+                        r = min(C, rn/rd)
+                        updatedDatum = datum.copy()
+                        updatedDatum.divideAll(1/r)
+                        self.weights[true_y] += updatedDatum
+                        self.weights[classified_y] -= updatedDatum
+            
+            classifications = self.classify(validationData)
+            score = len(filter(lambda (a,b): a==b, zip(validationLabels, classifications)))
+            if score > bestScore:
+                bestWeights = self.weights.copy()
+                bestScore = score
+
+        self.weights = bestWeights
         
         
     def classify(self, data ):
