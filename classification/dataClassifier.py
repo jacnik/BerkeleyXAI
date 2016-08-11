@@ -142,13 +142,13 @@ def enhancedFeatureExtractorDigit(datum):
     #features_23 = getFeaturesFromKernelAvg(datum, 12, 12)
     #features_24 = getFeaturesFromKernelAvg(datum, 10, 10)
     
-    #res = features_18 #9
-    #res = features_19 #18
-    #res = features_20 #21
-    #res = features_21 #35
-    #res = features_22 #48
-    #res = features_23 #42
-    #res = features_24 #51
+    #res = features_18 #78
+    #res = features_19 #79
+    #res = features_20 #78
+    #res = features_21 #75
+    #res = features_22 #46
+    #res = features_23 #
+    #res = features_24 #
     
     #features_25 = getFeaturesFromKernelAddition(datum, 2, 3)
     #features_26 = getFeaturesFromKernelAddition(datum, 3, 2)
@@ -159,8 +159,7 @@ def enhancedFeatureExtractorDigit(datum):
     #res = features_26 #77
     res = features_27 #81
     #res = features_28 #75
-    
-    
+
     #import pdb; pdb.set_trace()
     return res
     
@@ -228,6 +227,7 @@ def getFeaturesFromKernelAvg(datum, kernelRows, kernelColumns):
     """
     #edges = basicFeatureExtractorFace(datum)
     a = datum.getPixels()
+    treshold = kernelRows * kernelColumns / 2
     
     def calculateBoolFromKernel(x, y):
         counter = 0
@@ -237,7 +237,7 @@ def getFeaturesFromKernelAvg(datum, kernelRows, kernelColumns):
                 pixel = 1 if datum.getPixel(x + dx, y + dy) > 0 else 0
                 counter += pixel
         
-        return counter > x * y / 2
+        return counter > treshold
     
     features = util.Counter()
     for x in range(DIGIT_DATUM_WIDTH - kernelColumns):
