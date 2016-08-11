@@ -75,7 +75,7 @@ def enhancedFeatureExtractorDigit(datum):
 
     ##
     """
-    features =  basicFeatureExtractorDigit(datum)
+    #features =  basicFeatureExtractorDigit(datum)
 
     "*** YOUR CODE HERE ***"
     #import pdb; pdb.set_trace()         
@@ -93,17 +93,17 @@ def enhancedFeatureExtractorDigit(datum):
     # kernel = (1, 1, 1,  1, 1, 0,  1, 0, 0)
     # features_4 = getFeaturesFromKernelMultiplication(datum, kernel, 3, 3)
     
-    kernel = (0, 1)
-    features_5 = getFeaturesFromKernelMultiplication(datum, kernel, 1, 2)
+    # kernel = (0, 1)
+    # features_5 = getFeaturesFromKernelMultiplication(datum, kernel, 1, 2)
     
-    kernel = (0, 1)
-    features_6 = getFeaturesFromKernelMultiplication(datum, kernel, 2, 1)
+    # kernel = (0, 1)
+    # features_6 = getFeaturesFromKernelMultiplication(datum, kernel, 2, 1)
 
-    kernel = (1, 0)
-    features_7 = getFeaturesFromKernelMultiplication(datum, kernel, 1, 2)
+    # kernel = (1, 0)
+    # features_7 = getFeaturesFromKernelMultiplication(datum, kernel, 1, 2)
     
-    kernel = (1, 0)
-    features_8 = getFeaturesFromKernelMultiplication(datum, kernel, 2, 1)
+    # kernel = (1, 0)
+    # features_8 = getFeaturesFromKernelMultiplication(datum, kernel, 2, 1)
  
     # kernel = (0, 1, 1,  0, 0, 1,  0, 0, 0)
     # features_9 = getFeaturesFromKernelMultiplication(datum, kernel, 3, 3)
@@ -124,14 +124,10 @@ def enhancedFeatureExtractorDigit(datum):
     #res = features + features_5 + features_6 + features_7 + features_8 # 78%
     
     #features_13 = getFeaturesFromKernelAddition(datum, 3, 3)
-    
     #features_14 = getFeaturesFromKernelAddition(datum, 4, 4)
-    
     #features_15 = getFeaturesFromKernelAddition(datum, 5, 5)
-    
     # features_16 = getFeaturesFromKernelAddition(datum, 6, 6)
-    
-    # features_17 = getFeaturesFromKernelAddition(datum, 2, 2)
+    #features_17 = getFeaturesFromKernelAddition(datum, 2, 2)
     
     # res = features_13 #73
     # res = features_14 #75
@@ -140,13 +136,30 @@ def enhancedFeatureExtractorDigit(datum):
     
     #features_18 = getFeaturesFromKernelAvg(datum, 2, 2)
     #features_19 = getFeaturesFromKernelAvg(datum, 3, 3)
-    features_20 = getFeaturesFromKernelAvg(datum, 4, 4)
-    #features_21 = getFeaturesFromKernelAvg(datum, 5, 5)
+    #features_20 = getFeaturesFromKernelAvg(datum, 4, 4)
+    #features_21 = getFeaturesFromKernelAvg(datum, 5, 5) 
+    #features_22 = getFeaturesFromKernelAvg(datum, 8, 8)
+    #features_23 = getFeaturesFromKernelAvg(datum, 12, 12)
+    #features_24 = getFeaturesFromKernelAvg(datum, 10, 10)
     
     #res = features_18 #9
     #res = features_19 #18
-    res = features_20 #80
-    #res = features_21 #80
+    #res = features_20 #21
+    #res = features_21 #35
+    #res = features_22 #48
+    #res = features_23 #42
+    #res = features_24 #51
+    
+    #features_25 = getFeaturesFromKernelAddition(datum, 2, 3)
+    #features_26 = getFeaturesFromKernelAddition(datum, 3, 2)
+    features_27 = getFeaturesFromKernelAddition(datum, 1, 2)
+    #features_28 = getFeaturesFromKernelAddition(datum, 2, 1)
+    
+    #res = features_25 #79
+    #res = features_26 #77
+    res = features_27 #81
+    #res = features_28 #75
+    
     
     #import pdb; pdb.set_trace()
     return res
