@@ -78,11 +78,162 @@ def enhancedFeatureExtractorDigit(datum):
     features =  basicFeatureExtractorDigit(datum)
 
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #import pdb; pdb.set_trace()         
+    #return features
+    
+    # kernel = (0, 1, 1)
+    # features_1 = getFeaturesFromKernelMultiplication(datum, kernel, 1, 3)
+    
+    # kernel = (0, 1, 1)
+    # features_2 = getFeaturesFromKernelMultiplication(datum, kernel, 3, 1)
 
+    # kernel = (0, 0, 1,  0, 1, 1,  1, 1, 1)
+    # features_3 = getFeaturesFromKernelMultiplication(datum, kernel, 3, 3)
+
+    # kernel = (1, 1, 1,  1, 1, 0,  1, 0, 0)
+    # features_4 = getFeaturesFromKernelMultiplication(datum, kernel, 3, 3)
+    
+    kernel = (0, 1)
+    features_5 = getFeaturesFromKernelMultiplication(datum, kernel, 1, 2)
+    
+    kernel = (0, 1)
+    features_6 = getFeaturesFromKernelMultiplication(datum, kernel, 2, 1)
+
+    kernel = (1, 0)
+    features_7 = getFeaturesFromKernelMultiplication(datum, kernel, 1, 2)
+    
+    kernel = (1, 0)
+    features_8 = getFeaturesFromKernelMultiplication(datum, kernel, 2, 1)
+ 
+    # kernel = (0, 1, 1,  0, 0, 1,  0, 0, 0)
+    # features_9 = getFeaturesFromKernelMultiplication(datum, kernel, 3, 3)
+    
+    # kernel = (1, 1, 0,  1, 0, 0,  0, 0, 0)
+    # features_10 = getFeaturesFromKernelMultiplication(datum, kernel, 3, 3)
+
+    # kernel = (0, 0, 0,  1, 0, 0,  1, 1, 0)
+    # features_11 = getFeaturesFromKernelMultiplication(datum, kernel, 3, 3)
+    
+    # kernel = (0, 0, 0,  0, 0, 1,  0, 1, 1)
+    # features_12 = getFeaturesFromKernelMultiplication(datum, kernel, 3, 3)
+    
+    #res = features + features_1 + features_2 + features_3 # test => 78%
+    #res = features_1 + features_2 + features_3 + features_4 # test => 74% 
+    #res = features_5 + features_6 + features_7 + features_8 # 72%
+    #res = features_9 + features_10 + features_11 + features_12 # 34%
+    #res = features + features_5 + features_6 + features_7 + features_8 # 78%
+    
+    #features_13 = getFeaturesFromKernelAddition(datum, 3, 3)
+    
+    #features_14 = getFeaturesFromKernelAddition(datum, 4, 4)
+    
+    #features_15 = getFeaturesFromKernelAddition(datum, 5, 5)
+    
+    # features_16 = getFeaturesFromKernelAddition(datum, 6, 6)
+    
+    # features_17 = getFeaturesFromKernelAddition(datum, 2, 2)
+    
+    # res = features_13 #73
+    # res = features_14 #75
+    # res = features_15 #68
+    #res = features_17 #80
+    
+    #features_18 = getFeaturesFromKernelAvg(datum, 2, 2)
+    #features_19 = getFeaturesFromKernelAvg(datum, 3, 3)
+    features_20 = getFeaturesFromKernelAvg(datum, 4, 4)
+    #features_21 = getFeaturesFromKernelAvg(datum, 5, 5)
+    
+    #res = features_18 #9
+    #res = features_19 #18
+    res = features_20 #80
+    #res = features_21 #80
+    
+    #import pdb; pdb.set_trace()
+    return res
+    
+    
+def getFeaturesFromKernelMultiplication(datum, kernel, kernelRows, kernelColumns):
+    """
+    returns Counter of features
+    features are a binary multiple of pixels in kernel and image
+    """
+    #edges = basicFeatureExtractorFace(datum)
+    a = datum.getPixels()
+    
+    def calculateBoolFromKernel(x, y):
+        for dx in range(kernelColumns):
+            for dy in range(kernelRows):
+                #import pdb; pdb.set_trace()
+                pixel = 1 if datum.getPixel(x + dx, y + dy) > 0 else 0
+                kernelIndex = dx + dy * kernelColumns
+                if kernel[kernelIndex] != pixel:
+                    return False
+        return True
+    
+    features = util.Counter()
+    for x in range(DIGIT_DATUM_WIDTH - kernelColumns):
+        for y in range(DIGIT_DATUM_HEIGHT - kernelRows):
+            for dx in range(kernelColumns):
+                features[(x,y)] = calculateBoolFromKernel(x,y)
+                
     return features
 
+    
+def getFeaturesFromKernelAddition(datum, kernelRows, kernelColumns):
+    """
+    returns Counter of features
+    features are a binary sum of pixels in kernel,
+    that means that it will set feature to 1 
+    if any of the pixels in kernel range is a 1
+    """
+    #edges = basicFeatureExtractorFace(datum)
+    a = datum.getPixels()
+    
+    def calculateBoolFromKernel(x, y):
+        for dx in range(kernelColumns):
+            for dy in range(kernelRows):
+                #import pdb; pdb.set_trace()
+                pixel = 1 if datum.getPixel(x + dx, y + dy) > 0 else 0
+                if pixel == 1:
+                    return True
+        return False
+    
+    features = util.Counter()
+    for x in range(DIGIT_DATUM_WIDTH - kernelColumns):
+        for y in range(DIGIT_DATUM_HEIGHT - kernelRows):
+            for dx in range(kernelColumns):
+                features[(x,y)] = calculateBoolFromKernel(x,y)
+                
+    return features
 
+def getFeaturesFromKernelAvg(datum, kernelRows, kernelColumns):
+    """
+    returns Counter of features
+    features are a binary average of pixels in kernel,
+    that means that it will set feature to 1 
+    if more than a half of the pixels in kernel range is a 1
+    """
+    #edges = basicFeatureExtractorFace(datum)
+    a = datum.getPixels()
+    
+    def calculateBoolFromKernel(x, y):
+        counter = 0
+        for dx in range(kernelColumns):
+            for dy in range(kernelRows):
+                #import pdb; pdb.set_trace()
+                pixel = 1 if datum.getPixel(x + dx, y + dy) > 0 else 0
+                counter += pixel
+        
+        return counter > x * y / 2
+    
+    features = util.Counter()
+    for x in range(DIGIT_DATUM_WIDTH - kernelColumns):
+        for y in range(DIGIT_DATUM_HEIGHT - kernelRows):
+            for dx in range(kernelColumns):
+                features[(x,y)] = calculateBoolFromKernel(x,y)
+                
+    return features
+    
 
 def basicFeatureExtractorPacman(state):
     """
