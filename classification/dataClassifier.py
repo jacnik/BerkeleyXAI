@@ -288,7 +288,23 @@ def enhancedPacmanFeatures(state, action):
     """
     features = util.Counter()
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #import pdb; pdb.set_trace()
+    successorState = state.generateSuccessor(0, action)
+
+    features['score'] = successorState.getScore()
+    
+    features['closestGhost'] = min(
+        [util.manhattanDistance(successorState.getPacmanPosition(), ghostPosition)
+        for ghostPosition in successorState.getGhostPositions()] or [0])
+    
+    features['closestFoodPellet'] = min(
+        [util.manhattanDistance(successorState.getPacmanPosition(), pelletPosition)
+        for pelletPosition in successorState.getFood().asList()] or [0])
+
+    # features['closestPowerPellet'] = min(
+        # [util.manhattanDistance(successorState.getPacmanPosition(), pelletPosition)
+        # for pelletPosition in successorState.getCapsules()] or [0])
+    
     return features
 
 
